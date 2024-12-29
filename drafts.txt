@@ -1,0 +1,14 @@
+Банкомат англійською називається ATM, що розшифровується як Automated Teller Machine.
+
+cash machine
+cashpoint
+money machine
+
+bakomat - webpage imitation and tips (instuction)
+
+bakomat - maybe create separate project: 
+- research work logic 
+- create websimulator
+
+
+dispenser.
