@@ -12,3 +12,7 @@ bakomat - maybe create separate project:
 
 
 dispenser.
+
+bank landing page
+- research list of examples
+- create logo 
