@@ -4,9 +4,9 @@ cash machine
 cashpoint
 money machine
 
-bakomat - webpage imitation and tips (instuction)
+ATM - webpage imitation and tips (instuction)
 
-bakomat - maybe create separate project: 
+ATM - maybe create separate project: 
 - research work logic 
 - create websimulator
 
@@ -16,3 +16,6 @@ dispenser.
 bank landing page
 - research list of examples
 - create logo 
+
+DB get from: 
+https://github.com/mykola-telychko/mysql-databases/tree/main/bank
