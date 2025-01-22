@@ -1,8 +1,10 @@
-Банкомат англійською називається ATM, що розшифровується як Automated Teller Machine.
+ATM, що розшифровується як Automated Teller Machine.
 
-cash machine
-cashpoint
-money machine
+bank landing page
+- research list of examples
+- create logo 
+
+cash machine / cashpoint / money machine
 
 ATM - webpage imitation and tips (instuction)
 
@@ -13,9 +15,67 @@ ATM - maybe create separate project:
 
 dispenser.
 
-bank landing page
-- research list of examples
-- create logo 
-
 DB get from: 
 https://github.com/mykola-telychko/mysql-databases/tree/main/bank
+
+For bank and history math 
+https://www.luminor.lv/ru/arhiv-novostey
+
+
+Landing-example
++
+https://codepen.io/Daniel-Arturo-Maupom-Rosales/pen/OJeVLgy
+
+https://codepen.io/shahriarahmmed/details/eYWqavZ
+
+https://codepen.io/MAHESHBYL/pen/oNYWZQG (5/5)
+
+------
+
+Checker technology in site 
+
+Bank examples: 
+https://www.swedbank.com/work-with-us.html (get tech-list: https://jobs.swedbank.com/departments/it-and-data
+design 2/5)
+
+https://www.cooppank.ee/en/private/home/home-loan (nice calculator, design 4/5, )
+
+https://jobs.bigbank.eu/open-positions/credit-risk-specialist
+
+https://kompasbank.dk/da/om-kompasbank/jura
+
+https://www.nykredit.dk/dit-liv/forsikring/#forsikringstilbud
+
+https://pengeraadgivning.dk/blog/
+
+https://www.sydbank.dk/
+
+https://www.knab.nl/zakelijk/verzekeren/zzp
+
+https://www.abnamro.nl/en/personal/interest/current-interest-rates.html
+
+https://3s.money/?campaignid=20613783725&adgroupid=163168756263&keyword=business%20bank%20online&matchtype=b&network=g&device=c&clickid=CjwKCAiApsm7BhBZEiwAvIu2XwTqfBXCk1-n6IYeI6r4XFwg4qBfX7i7WuNtVCOFO29DgWR0K4RrnRoCvqoQAvD_BwE&creative=705306301852&placement=&adposition=&utm_source=google&utm_medium=cpc&gad_source=1&gclid=CjwKCAiApsm7BhBZEiwAvIu2XwTqfBXCk1-n6IYeI6r4XFwg4qBfX7i7WuNtVCOFO29DgWR0K4RrnRoCvqoQAvD_BwE
+
+----------------
+
+ATM
+
+https://codepen.io/telychko-mykola/pen/WbeadZp
+
+https://codepen.io/telychko-mykola/pen/MYgPrQQ
+
+https://codepen.io/kolyasa_demetrio/pen/QNrGjP // (example structures, 3/5)
+
+https://codepen.io/asmirbe/pen/bGJEYEo // BANK CARD
+
+https://codepen.io/sergiolourojunior/pen/XWbGaYd // BANK CARD
+
+https://codepen.io/jkantner/pen/KKaYVXv // CHECK design
+
+https://codepen.io/havardob/pen/PoWbeoZ // Latest transactions
+
+https://codepen.io/eugene11/details/PobQxrx // (example structures, 4/5)
+
+https://codepen.io/jorgemoovein-the-bashful/pen/RwWyBaK // Bank Balances Sheet
+
+https://codepen.io/TKG/pen/NWBgBR // Bills & Coins Counter (for ATMs and DISPENSERs)
