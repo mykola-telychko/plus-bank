@@ -60,9 +60,9 @@ https://3s.money/?campaignid=20613783725&adgroupid=163168756263&keyword=business
 
 ATM
 
-https://codepen.io/telychko-mykola/pen/WbeadZp
+https://codepen.io/telychko-mykola/pen/WbeadZp // pieces logic
 
-https://codepen.io/telychko-mykola/pen/MYgPrQQ
+https://codepen.io/telychko-mykola/pen/MYgPrQQ // ATM and Dispanser
 
 https://codepen.io/kolyasa_demetrio/pen/QNrGjP // (example structures, 3/5)
 
