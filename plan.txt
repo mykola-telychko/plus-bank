@@ -2,6 +2,12 @@
 https://plusbank1.durablesites.com/unpublished
 https://github.com/mykola-telychko/kivi/blob/main/kivi-db/logo-sketch.jpg
 
+
+https://github.com/shivamverma26/ATM_Simulator
+
+https://github.com/joeltadeu/atm-simulator/tree/master
+
+
 аспекти планування:
 
 1. Аналіз потреб
