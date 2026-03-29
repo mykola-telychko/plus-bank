@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATM</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #e8e8e8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ═══ ATM BODY ═══ */
+  .atm {
+    width: 420px;
+    background: #f0f0f0;
+    border: 3px solid #111;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    position: relative;
+  }
+
+  /* Top strip */
+  .atm-top {
+    width: 100%;
+    background: #111;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .atm-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.2em;
+    color: #f0f0f0;
+  }
+
+  .atm-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: #888;
+  }
+
+  .status-led {
+    width: 8px; height: 8px;
+    background: #f0f0f0;
+    border-radius: 50%;
+  }
+
+  /* ═══ CARD SLOT SECTION ═══ */
+  .card-zone {
+    width: 100%;
+    background: #1a1a1a;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-top: 2px solid #111;
+    border-bottom: 2px solid #111;
+  }
+
+  .card-slot {
+    width: 80px;
+    height: 52px;
+    border: 2px solid #444;
+    background: #111;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .card-slot-label {
+    font-size: 7px;
+    letter-spacing: 0.2em;
+    color: #555;
+    text-transform: uppercase;
+    position: absolute;
+    bottom: -16px;
+    left: 0; right: 0;
+    text-align: center;
+  }
+
+  .card-slot-inner {
+    width: 58px;
+    height: 6px;
+    background: #222;
+    border: 1px solid #333;
+    position: relative;
+  }
+
+  .card-slot-inner::before {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    background: linear-gradient(90deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%);
+  }
+
+  /* Card visible when inserted */
+  .card-visible {
+    display: none;
+    width: 56px;
+    height: 36px;
+    background: #f0f0f0;
+    border: 1px solid #555;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    overflow: hidden;
+  }
+
+  .card-visible::after {
+    content: '';
+    position: absolute;
+    bottom: 6px; left: 6px; right: 6px;
+    height: 6px;
+    background: #c8a000;
+    opacity: 0.8;
+  }
+
+  .card-visible.show { display: block; }
+
+  .card-info {
+    flex: 1;
+  }
+
+  .card-info-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: #555;
+    margin-bottom: 4px;
+  }
+
+  .card-info-status {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: #f0f0f0;
+    font-weight: 500;
+  }
+
+  .card-info-number {
+    font-size: 10px;
+    color: #888;
+    margin-top: 2px;
+    letter-spacing: 0.08em;
+  }
+
+  /* ═══ SCREEN AREA ═══ */
+  .screen-frame {
+    width: 100%;
+    padding: 16px;
+    background: #f0f0f0;
+    border-bottom: 2px solid #ddd;
+  }
+
+  .screen {
+    width: 100%;
+    background: #fff;
+    border: 2px solid #111;
+    min-height: 220px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .screen-header {
+    background: #111;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .screen-title {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: #f0f0f0;
+  }
+
+  .screen-time {
+    font-size: 10px;
+    color: #888;
+    letter-spacing: 0.05em;
+  }
+
+  .screen-body {
+    flex: 1;
+    padding: 20px 16px;
+    display: none;
+    flex-direction: column;
+  }
+
+  .screen-body.active { display: flex; }
+
+  /* Welcome screen */
+  .welcome-screen {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .welcome-big {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    letter-spacing: 0.05em;
+    color: #111;
+    line-height: 1;
+  }
+
+  .welcome-sub {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: #888;
+  }
+
+  .insert-hint {
+    margin-top: 16px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: #aaa;
+    border-top: 1px solid #eee;
+    padding-top: 12px;
+    width: 100%;
+    text-align: center;
+    animation: blink 2s step-end infinite;
+  }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  /* PIN screen */
+  .pin-screen { gap: 10px; }
+
+  .screen-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: #888;
+    margin-bottom: 4px;
+  }
+
+  .pin-dots {
+    display: flex;
+    gap: 12px;
+    margin: 4px 0 10px;
+  }
+
+  .pin-dot {
+    width: 14px; height: 14px;
+    border: 2px solid #111;
+    background: #fff;
+    transition: background 0.1s;
+  }
+
+  .pin-dot.filled { background: #111; }
+
+  .pin-hint {
+    font-size: 10px;
+    color: #aaa;
+    letter-spacing: 0.1em;
+  }
+
+  /* Menu screen */
+  .menu-screen { gap: 6px; }
+
+  .menu-greeting {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: #888;
+    margin-bottom: 8px;
+  }
+
+  .menu-balance {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: #111;
+    letter-spacing: 0.05em;
+  }
+
+  .menu-bal-label {
+    font-size: 9px;
+    color: #aaa;
+    letter-spacing: 0.2em;
+    margin-bottom: 12px;
+  }
+
+  .menu-divider {
+    width: 100%;
+    height: 1px;
+    background: #eee;
+    margin: 4px 0;
+  }
+
+  .menu-items {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  .menu-item {
+    border: 1px solid #e0e0e0;
+    padding: 8px 10px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.1s;
+    background: #fafafa;
+    user-select: none;
+  }
+
+  .menu-item:hover { background: #111; color: #fff; border-color: #111; }
+  .menu-item:active { background: #333; }
+
+  /* Amount screen */
+  .amount-screen { gap: 8px; }
+
+  .amount-display {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: #111;
+    letter-spacing: 0.05em;
+    line-height: 1;
+  }
+
+  .amount-currency {
+    font-size: 14px;
+    color: #aaa;
+    letter-spacing: 0.2em;
+    margin-bottom: 6px;
+  }
+
+  .amount-presets {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    margin-top: 4px;
+  }
+
+  .amount-preset {
+    border: 1px solid #ddd;
+    padding: 6px 4px;
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.1s;
+    background: #fafafa;
+  }
+
+  .amount-preset:hover { background: #111; color: #fff; border-color: #111; }
+
+  /* Processing screen */
+  .processing-screen {
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .spinner {
+    width: 32px; height: 32px;
+    border: 3px solid #eee;
+    border-top-color: #111;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .processing-text {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: #555;
+  }
+
+  /* Receipt screen */
+  .receipt-screen { gap: 6px; }
+
+  .receipt-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 11px;
+    padding: 4px 0;
+    border-bottom: 1px solid #f0f0f0;
+    letter-spacing: 0.05em;
+  }
+
+  .receipt-label { color: #888; }
+  .receipt-value { color: #111; font-weight: 500; }
+  .receipt-value.big {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+  }
+
+  .receipt-ok {
+    margin-top: 8px;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: #888;
+    text-align: center;
+  }
+
+  /* ═══ SIDE BUTTONS ═══ */
+  .screen-with-buttons {
+    display: flex;
+    gap: 0;
+    padding: 0 0 0 0;
+    width: 100%;
+  }
+
+  .side-buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 16px 0;
+    width: 36px;
+    background: #f0f0f0;
+    flex-shrink: 0;
+  }
+
+  .side-buttons.left { border-right: 2px solid #ddd; }
+  .side-buttons.right { border-left: 2px solid #ddd; }
+
+  .side-btn {
+    width: 28px;
+    height: 28px;
+    background: #111;
+    border: none;
+    cursor: pointer;
+    margin: 0 auto;
+    display: block;
+    transition: background 0.1s;
+    position: relative;
+  }
+
+  .side-btn::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    background: #333;
+  }
+
+  .side-btn:hover { background: #444; }
+  .side-btn:active { background: #000; transform: scale(0.95); }
+
+  /* ═══ NUMPAD ═══ */
+  .numpad-zone {
+    width: 100%;
+    padding: 16px;
+    background: #f0f0f0;
+    border-top: 2px solid #ddd;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .numpad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    flex: 1;
+  }
+
+  .num-btn {
+    height: 44px;
+    background: #fff;
+    border: 2px solid #ddd;
+    font-family: 'DM Mono', monospace;
+    font-size: 16px;
+    font-weight: 500;
+    color: #111;
+    cursor: pointer;
+    transition: all 0.1s;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+  }
+
+  .num-btn:hover { background: #f5f5f5; border-color: #111; }
+  .num-btn:active { background: #111; color: #fff; }
+
+  .num-btn.zero {
+    grid-column: 1 / 3;
+  }
+
+  .num-btn.clear {
+    background: #111;
+    border-color: #111;
+    color: #f0f0f0;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+
+  .num-btn.clear:hover { background: #333; }
+  .num-btn.clear:active { background: #000; }
+
+  /* Action buttons column */
+  .action-col {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 80px;
+    flex-shrink: 0;
+  }
+
+  .action-btn {
+    height: 44px;
+    border: 2px solid #111;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    cursor: pointer;
+    transition: all 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    text-align: center;
+  }
+
+  .action-btn.confirm {
+    background: #111;
+    color: #f0f0f0;
+  }
+
+  .action-btn.confirm:hover { background: #333; }
+  .action-btn.confirm:active { background: #000; }
+
+  .action-btn.cancel {
+    background: #fff;
+    color: #111;
+  }
+
+  .action-btn.cancel:hover { background: #111; color: #fff; }
+  .action-btn.cancel:active { background: #000; color: #fff; }
+
+  .action-btn.back {
+    background: #f0f0f0;
+    border-color: #ccc;
+    color: #555;
+    font-size: 18px;
+  }
+
+  .action-btn.back:hover { border-color: #111; color: #111; }
+  .action-btn.back:active { background: #111; color: #fff; }
+
+  /* ═══ CASH SLOT ═══ */
+  .cash-zone {
+    width: 100%;
+    background: #1a1a1a;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-top: 2px solid #111;
+  }
+
+  .cash-slot {
+    width: 120px;
+    height: 28px;
+    background: #111;
+    border: 2px solid #444;
+    position: relative;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .cash-slot-gap {
+    width: 90px;
+    height: 8px;
+    background: #000;
+    border: 1px solid #333;
+  }
+
+  .cash-visible {
+    display: none;
+    position: absolute;
+    left: 0; top: 50%;
+    transform: translateY(-50%);
+    height: 24px;
+    background: #f0f0f0;
+    border-right: 1px solid #888;
+    animation: eject 0.6s ease-out forwards;
+  }
+
+  @keyframes eject {
+    from { width: 0; }
+    to { width: 70px; }
+  }
+
+  .cash-visible.show { display: block; }
+
+  .cash-slot-label {
+    font-size: 7px;
+    letter-spacing: 0.2em;
+    color: #555;
+    position: absolute;
+    bottom: -16px;
+    left: 0; right: 0;
+    text-align: center;
+  }
+
+  .cash-info {
+    flex: 1;
+  }
+
+  .cash-info-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: #555;
+    margin-bottom: 4px;
+  }
+
+  .cash-info-status {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: #888;
+  }
+
+  .cash-info-status.ready {
+    color: #f0f0f0;
+  }
+
+  /* Bottom strip */
+  .atm-bottom {
+    width: 100%;
+    background: #111;
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .atm-bottom-text {
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    color: #444;
+  }
+
+  .receipt-slot {
+    width: 60px;
+    height: 10px;
+    background: #000;
+    border: 1px solid #333;
+    position: relative;
+  }
+
+  .receipt-slot::after {
+    content: 'RECEIPT';
+    position: absolute;
+    bottom: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 7px;
+    letter-spacing: 0.15em;
+    color: #444;
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+
+<div class="atm">
+
+  <!-- TOP STRIP -->
+  <div class="atm-top">
+    <div class="atm-brand">MONOBANK ATM</div>
+    <div class="atm-status">
+      <div class="status-led"></div>
+      ONLINE
+    </div>
+  </div>
+
+  <!-- CARD SLOT -->
+  <div class="card-zone">
+    <div class="card-slot" id="card-slot-el">
+      <div class="card-slot-inner"></div>
+      <div class="card-visible" id="card-visible"></div>
+      <div class="card-slot-label">CARD SLOT</div>
+    </div>
+    <div class="card-info">
+      <div class="card-info-label">CARD READER</div>
+      <div class="card-info-status" id="card-status-text">INSERT CARD</div>
+      <div class="card-info-number" id="card-number-text">&nbsp;</div>
+    </div>
+  </div>
+
+  <!-- SCREEN + SIDE BUTTONS -->
+  <div class="screen-with-buttons">
+
+    <!-- Left side buttons -->
+    <div class="side-buttons left">
+      <button class="side-btn" onclick="sideBtn('L1')"></button>
+      <button class="side-btn" onclick="sideBtn('L2')"></button>
+      <button class="side-btn" onclick="sideBtn('L3')"></button>
+      <button class="side-btn" onclick="sideBtn('L4')"></button>
+    </div>
+
+    <!-- SCREEN -->
+    <div class="screen-frame" style="flex:1; padding: 16px 0;">
+      <div class="screen" id="screen">
+        <div class="screen-header">
+          <div class="screen-title" id="screen-title">WELCOME</div>
+          <div class="screen-time" id="screen-time">00:00</div>
+        </div>
+
+        <!-- WELCOME -->
+        <div class="screen-body active welcome-screen" id="s-welcome">
+          <div class="welcome-big">GOOD<br>DAY</div>
+          <div class="welcome-sub">AUTOMATED TELLER MACHINE</div>
+          <div class="insert-hint">↑ INSERT CARD TO BEGIN</div>
+        </div>
+
+        <!-- PIN -->
+        <div class="screen-body pin-screen" id="s-pin">
+          <div class="screen-label">ENTER PIN CODE</div>
+          <div class="pin-dots">
+            <div class="pin-dot" id="p0"></div>
+            <div class="pin-dot" id="p1"></div>
+            <div class="pin-dot" id="p2"></div>
+            <div class="pin-dot" id="p3"></div>
+          </div>
+          <div class="pin-hint">USE NUMPAD BELOW</div>
+        </div>
+
+        <!-- MENU -->
+        <div class="screen-body menu-screen" id="s-menu">
+          <div class="menu-greeting">WELCOME, CARDHOLDER</div>
+          <div class="menu-balance" id="balance-display">12,450.00</div>
+          <div class="menu-bal-label">AVAILABLE BALANCE · UAH</div>
+          <div class="menu-divider"></div>
+          <div class="menu-items">
+            <div class="menu-item" onclick="goWithdraw()">WITHDRAW CASH</div>
+            <div class="menu-item" onclick="goMenu()">CHECK BALANCE</div>
+            <div class="menu-item" onclick="goMenu()">TRANSFER</div>
+            <div class="menu-item" onclick="ejectCard()">EJECT CARD</div>
+          </div>
+        </div>
+
+        <!-- AMOUNT -->
+        <div class="screen-body amount-screen" id="s-amount">
+          <div class="screen-label">ENTER AMOUNT</div>
+          <div class="amount-currency">UAH</div>
+          <div class="amount-display" id="amount-display">0</div>
+          <div class="amount-presets">
+            <div class="amount-preset" onclick="setAmount(200)">200</div>
+            <div class="amount-preset" onclick="setAmount(500)">500</div>
+            <div class="amount-preset" onclick="setAmount(1000)">1000</div>
+            <div class="amount-preset" onclick="setAmount(2000)">2000</div>
+          </div>
+        </div>
+
+        <!-- PROCESSING -->
+        <div class="screen-body processing-screen" id="s-processing">
+          <div class="spinner"></div>
+          <div class="processing-text" id="processing-text">PROCESSING...</div>
+        </div>
+
+        <!-- RECEIPT -->
+        <div class="screen-body receipt-screen" id="s-receipt">
+          <div class="receipt-row">
+            <span class="receipt-label">DATE</span>
+            <span class="receipt-value" id="r-date">—</span>
+          </div>
+          <div class="receipt-row">
+            <span class="receipt-label">CARD</span>
+            <span class="receipt-value">**** **** **** 4721</span>
+          </div>
+          <div class="receipt-row">
+            <span class="receipt-label">OPERATION</span>
+            <span class="receipt-value">WITHDRAWAL</span>
+          </div>
+          <div class="receipt-row">
+            <span class="receipt-label">AMOUNT</span>
+            <span class="receipt-value big" id="r-amount">—</span>
+          </div>
+          <div class="receipt-row">
+            <span class="receipt-label">BALANCE</span>
+            <span class="receipt-value" id="r-balance">—</span>
+          </div>
+          <div class="receipt-ok">TAKE YOUR CASH ↓</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Right side buttons -->
+    <div class="side-buttons right">
+      <button class="side-btn" onclick="sideBtn('R1')"></button>
+      <button class="side-btn" onclick="sideBtn('R2')"></button>
+      <button class="side-btn" onclick="sideBtn('R3')"></button>
+      <button class="side-btn" onclick="sideBtn('R4')"></button>
+    </div>
+
+  </div>
+
+  <!-- NUMPAD -->
+  <div class="numpad-zone">
+    <div class="numpad">
+      <button class="num-btn" onclick="numPress('1')">1</button>
+      <button class="num-btn" onclick="numPress('2')">2</button>
+      <button class="num-btn" onclick="numPress('3')">3</button>
+      <button class="num-btn" onclick="numPress('4')">4</button>
+      <button class="num-btn" onclick="numPress('5')">5</button>
+      <button class="num-btn" onclick="numPress('6')">6</button>
+      <button class="num-btn" onclick="numPress('7')">7</button>
+      <button class="num-btn" onclick="numPress('8')">8</button>
+      <button class="num-btn" onclick="numPress('9')">9</button>
+      <button class="num-btn zero" onclick="numPress('0')">0</button>
+      <button class="num-btn clear" onclick="numClear()">CLR</button>
+    </div>
+    <div class="action-col">
+      <button class="action-btn confirm" onclick="confirm()">CONFIRM</button>
+      <button class="action-btn back" onclick="backspace()">⌫</button>
+      <button class="action-btn cancel" onclick="cancel()">CANCEL</button>
+    </div>
+  </div>
+
+  <!-- CASH SLOT -->
+  <div class="cash-zone">
+    <div class="cash-slot" id="cash-slot-el" style="position:relative;">
+      <div class="cash-slot-gap"></div>
+      <div class="cash-visible" id="cash-visible"></div>
+      <div class="cash-slot-label">CASH DISPENSER</div>
+    </div>
+    <div class="cash-info">
+      <div class="cash-info-label">CASH OUTPUT</div>
+      <div class="cash-info-status" id="cash-status">STANDBY</div>
+    </div>
+  </div>
+
+  <!-- BOTTOM -->
+  <div class="atm-bottom">
+    <div class="atm-bottom-text">24H SERVICE · TERMINAL #0042</div>
+    <div class="receipt-slot"></div>
+    <div class="atm-bottom-text">SECURE CONNECTION</div>
+  </div>
+
+</div>
+
+<script>
+  // ── State ──────────────────────────────────────
+  const state = {
+    screen: 'welcome',    // welcome | pin | menu | amount | processing | receipt
+    cardInserted: false,
+    pin: '',
+    correctPin: '1234',
+    pinAttempts: 0,
+    amount: 0,
+    balance: 12450,
+    customAmount: '',
+  };
+
+  // ── Clock ──────────────────────────────────────
+  function updateClock() {
+    const now = new Date();
+    const t = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    document.getElementById('screen-time').textContent = t;
+  }
+  updateClock();
+  setInterval(updateClock, 10000);
+
+  // ── Screen switching ───────────────────────────
+  function showScreen(id, title) {
+    document.querySelectorAll('.screen-body').forEach(el => el.classList.remove('active'));
+    document.getElementById('s-' + id).classList.add('active');
+    document.getElementById('screen-title').textContent = title;
+    state.screen = id;
+  }
+
+  // ── Card ───────────────────────────────────────
+  // Simulate card insert on card slot click
+  document.getElementById('card-slot-el').addEventListener('click', () => {
+    if (!state.cardInserted) insertCard();
+  });
+
+  function insertCard() {
+    state.cardInserted = true;
+    document.getElementById('card-visible').classList.add('show');
+    document.getElementById('card-status-text').textContent = 'CARD ACCEPTED';
+    document.getElementById('card-number-text').textContent = '**** **** **** 4721';
+    state.pin = '';
+    updatePinDots();
+    showScreen('pin', 'PIN ENTRY');
+  }
+
+  function ejectCard() {
+    state.cardInserted = false;
+    document.getElementById('card-visible').classList.remove('show');
+    document.getElementById('card-status-text').textContent = 'INSERT CARD';
+    document.getElementById('card-number-text').textContent = '\u00a0';
+    showScreen('welcome', 'WELCOME');
+  }
+
+  // ── PIN ────────────────────────────────────────
+  function updatePinDots() {
+    for (let i = 0; i < 4; i++) {
+      document.getElementById('p' + i).classList.toggle('filled', i < state.pin.length);
+    }
+  }
+
+  // ── Numpad ─────────────────────────────────────
+  function numPress(digit) {
+    if (state.screen === 'pin') {
+      if (state.pin.length < 4) {
+        state.pin += digit;
+        updatePinDots();
+      }
+    } else if (state.screen === 'amount') {
+      if (state.customAmount.length < 6) {
+        state.customAmount += digit;
+        document.getElementById('amount-display').textContent =
+          parseInt(state.customAmount || '0').toLocaleString();
+        state.amount = parseInt(state.customAmount);
+      }
+    }
+  }
+
+  function backspace() {
+    if (state.screen === 'pin') {
+      state.pin = state.pin.slice(0, -1);
+      updatePinDots();
+    } else if (state.screen === 'amount') {
+      state.customAmount = state.customAmount.slice(0, -1);
+      document.getElementById('amount-display').textContent =
+        parseInt(state.customAmount || '0').toLocaleString() || '0';
+      state.amount = parseInt(state.customAmount || '0');
+    }
+  }
+
+  function numClear() {
+    if (state.screen === 'pin') {
+      state.pin = '';
+      updatePinDots();
+    } else if (state.screen === 'amount') {
+      state.customAmount = '';
+      state.amount = 0;
+      document.getElementById('amount-display').textContent = '0';
+    }
+  }
+
+  // ── Confirm ────────────────────────────────────
+  function confirm() {
+    if (state.screen === 'pin') confirmPin();
+    else if (state.screen === 'amount') confirmAmount();
+    else if (state.screen === 'receipt') finishTransaction();
+    else if (state.screen === 'menu') {}
+  }
+
+  function confirmPin() {
+    if (state.pin.length < 4) return;
+    if (state.pin === state.correctPin) {
+      state.pinAttempts = 0;
+      showScreen('processing', 'VERIFYING');
+      document.getElementById('processing-text').textContent = 'VERIFYING PIN...';
+      setTimeout(() => {
+        document.getElementById('balance-display').textContent =
+          state.balance.toLocaleString('uk-UA', {minimumFractionDigits:2});
+        showScreen('menu', 'MAIN MENU');
+      }, 1500);
+    } else {
+      state.pinAttempts++;
+      state.pin = '';
+      updatePinDots();
+      if (state.pinAttempts >= 3) {
+        showScreen('processing', 'ERROR');
+        document.getElementById('processing-text').textContent = 'CARD BLOCKED';
+        setTimeout(() => ejectCard(), 2500);
+      } else {
+        document.querySelector('#s-pin .pin-hint').textContent =
+          `WRONG PIN. ${3 - state.pinAttempts} ATTEMPT(S) LEFT`;
+      }
+    }
+  }
+
+  function goWithdraw() {
+    state.amount = 0;
+    state.customAmount = '';
+    document.getElementById('amount-display').textContent = '0';
+    showScreen('amount', 'WITHDRAW');
+  }
+
+  function goMenu() {
+    showScreen('menu', 'MAIN MENU');
+  }
+
+  function setAmount(val) {
+    state.amount = val;
+    state.customAmount = String(val);
+    document.getElementById('amount-display').textContent = val.toLocaleString();
+  }
+
+  function confirmAmount() {
+    if (state.amount <= 0 || state.amount > state.balance) {
+      document.querySelector('#s-amount .screen-label').textContent = 'INSUFFICIENT FUNDS';
+      setTimeout(() => {
+        document.querySelector('#s-amount .screen-label').textContent = 'ENTER AMOUNT';
+      }, 1500);
+      return;
+    }
+    showScreen('processing', 'DISPENSING');
+    document.getElementById('processing-text').textContent = 'DISPENSING CASH...';
+    setTimeout(() => {
+      state.balance -= state.amount;
+      dispenseCash();
+    }, 2000);
+  }
+
+  function dispenseCash() {
+    const cv = document.getElementById('cash-visible');
+    const cs = document.getElementById('cash-status');
+    cv.classList.remove('show');
+    void cv.offsetWidth;
+    cv.classList.add('show');
+    cs.textContent = 'TAKE YOUR CASH';
+    cs.classList.add('ready');
+
+    const now = new Date();
+    document.getElementById('r-date').textContent =
+      `${now.getDate().toString().padStart(2,'0')}.${(now.getMonth()+1).toString().padStart(2,'0')}.${now.getFullYear()}`;
+    document.getElementById('r-amount').textContent = state.amount.toLocaleString() + ' UAH';
+    document.getElementById('r-balance').textContent =
+      state.balance.toLocaleString('uk-UA', {minimumFractionDigits:2}) + ' UAH';
+
+    showScreen('receipt', 'TRANSACTION OK');
+  }
+
+  function finishTransaction() {
+    document.getElementById('cash-visible').classList.remove('show');
+    document.getElementById('cash-status').textContent = 'STANDBY';
+    document.getElementById('cash-status').classList.remove('ready');
+    document.getElementById('balance-display').textContent =
+      state.balance.toLocaleString('uk-UA', {minimumFractionDigits:2});
+    showScreen('menu', 'MAIN MENU');
+  }
+
+  // ── Cancel ────────────────────────────────────
+  function cancel() {
+    if (state.screen === 'welcome') return;
+    if (state.screen === 'receipt') { finishTransaction(); return; }
+    if (state.screen === 'pin' || state.screen === 'processing') { ejectCard(); return; }
+    if (state.screen === 'amount') { showScreen('menu', 'MAIN MENU'); return; }
+    ejectCard();
+  }
+
+  // ── Side buttons (contextual) ──────────────────
+  function sideBtn(id) {
+    if (state.screen === 'menu') {
+      const map = { L1: goWithdraw, L2: goMenu, L3: goMenu, L4: ejectCard,
+                    R1: goWithdraw, R2: goMenu, R3: goMenu, R4: ejectCard };
+      if (map[id]) map[id]();
+    }
+  }
+</script>
+</body>
+</html>

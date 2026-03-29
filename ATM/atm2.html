@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATM TERMINAL</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: #fff;
+  font-family: 'IBM Plex Mono', monospace;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 32px 16px;
+}
+
+.page {
+  display: flex;
+  gap: 0;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 1300px;
+}
+
+/* ══════════════════════════════════
+   LEFT PANEL
+══════════════════════════════════ */
+.left-panel {
+  width: 252px;
+  flex-shrink: 0;
+  border: 2px solid #111;
+  border-right: none;
+  background: #fff;
+}
+
+.panel-hdr {
+  /* background: #111; */
+  background: #004a77;
+  padding: 15px 16px 13px;
+}
+.panel-hdr-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 0.18em;
+  color: #fff;
+  line-height: 1;
+}
+.panel-hdr-sub {
+  font-size: 8px;
+  letter-spacing: 0.28em;
+  color: #666;
+  margin-top: 3px;
+}
+
+.section-lbl {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  color: #bbb;
+  padding: 9px 14px 7px;
+  background: #fafafa;
+  border-bottom: 1px solid #eee;
+  border-top: 1px solid #eee;
+}
+
+.card-item {
+  padding: 11px 14px 10px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.card-item:hover { background: #f7f7f7; }
+/* .card-item.selected { background: #111; } */
+.card-item.selected { background: #004a77; }
+
+.ci-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:5px; }
+
+.ci-name {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #111;
+  line-height: 1.25;
+}
+.card-item.selected .ci-name { color: #fff; }
+
+.ci-net {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #999;
+  text-align: right;
+  line-height: 1.35;
+}
+.card-item.selected .ci-net { color: #888; }
+
+.ci-num {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: #666;
+  margin-bottom: 2px;
+}
+.card-item.selected .ci-num { color: #bbb; }
+
+.ci-holder {
+  font-size: 9px;
+  letter-spacing: 0.07em;
+  color: #999;
+}
+.card-item.selected .ci-holder { color: #888; }
+
+.ci-meta {
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  color: #ccc;
+  margin-top: 3px;
+}
+.card-item.selected .ci-meta { color: #666; }
+
+.badge {
+  display: inline-block;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  padding: 2px 6px;
+  border: 1px solid;
+  margin-top: 5px;
+}
+.badge-cr { border-color: #111; color: #111; }
+.badge-dep { border-color: #888; color: #888; }
+.badge-uni { border-color: #555; color: #555; }
+.card-item.selected .badge-cr,
+.card-item.selected .badge-dep,
+.card-item.selected .badge-uni { border-color: #666; color: #666; }
+
+/* ══════════════════════════════════
+   ATM CENTER
+══════════════════════════════════ */
+.atm {
+  flex: 0 0 408px;
+  background: #fff;
+  border: 2px solid #111;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Top */
+.atm-top {
+  /* background: #111; */
+  background: #004a77;
+  padding: 15px 20px 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.atm-brand {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px;
+  letter-spacing: 0.2em;
+  color: #fff;
+}
+.atm-top-right { display:flex; flex-direction:column; align-items:flex-end; gap:3px; }
+.atm-online { display:flex; align-items:center; gap:5px; font-size:9px; font-weight:600; letter-spacing:0.15em; color:#fff; }
+.led { width:7px; height:7px; background:#fff; border-radius:50%; animation:led 3s ease-in-out infinite; }
+@keyframes led{0%,100%{opacity:1}50%{opacity:.25}}
+.atm-id { font-size:8px; letter-spacing:0.12em; color:#555; }
+
+/* Card reader */
+.card-zone {
+  /* background: #111; */
+  background: #e8e0e0;
+  padding: 14px 20px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-top: 1px solid #1e1e1e;
+  border-bottom: 2px solid #111;
+}
+.card-slot {
+  width: 80px; height: 52px;
+  border: 2px solid #2a2a2a;
+  background: #e8e0e0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.card-slot:hover { border-color: #444; }
+.slot-gap { width:58px; height:5px; background:#e8e0e0; border:1px solid #222; }
+.card-in-slot {
+  display:none;
+  position:absolute;
+  inset:5px;
+  background:#e5e5e5;
+  border:1px solid #555;
+}
+.card-in-slot::after {
+  content:'';
+  position:absolute;
+  bottom:4px; left:4px; right:4px;
+  height:5px;
+  background:#b8900a;
+}
+.card-in-slot.show { display:block; }
+.slot-lbl {
+  position:absolute;
+  bottom:-15px; left:0; right:0;
+  text-align:center;
+  font-size:7px; letter-spacing:0.18em; color:#444;
+}
+.cri-label { font-size:8px; letter-spacing:0.2em; color:#444; margin-bottom:4px; }
+.cri-status { font-size:14px; font-weight:700; letter-spacing:0.08em; color:#fff; }
+.cri-num { font-size:10px; letter-spacing:0.09em; color:#555; margin-top:2px; }
+
+/* Screen row */
+.screen-row { display:flex; background:#fff; border-bottom:2px solid #111; }
+
+.side-btns {
+  width: 34px;
+  flex-shrink: 0;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 16px 0;
+  gap: 10px;
+}
+.side-btns.L { border-right:2px solid #111; }
+.side-btns.R { border-left:2px solid #111; }
+
+.sb-wrap { display:flex; flex-direction:column; align-items:center; gap:3px; }
+
+.sb {
+  width: 22px; height: 22px;
+  background: #888;
+  border: none;
+  cursor: pointer;
+  display: block;
+  transition: background 0.1s;
+  flex-shrink: 0;
+}
+.sb:hover { background: #444; }
+.sb:active { background: #000; transform:scale(.92); }
+
+.sb-lbl {
+  font-size: 6px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #ccc;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* Screen */
+.screen-frame { flex:1; padding:14px; }
+.screen {
+  border:2px solid #111;
+  background:#fff;
+  min-height:250px;
+  display:flex;
+  flex-direction:column;
+}
+.screen-hdr {
+  background:#111;
+  padding:8px 13px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.screen-title { font-size:11px; font-weight:700; letter-spacing:0.22em; color:#fff; }
+.screen-time { font-size:10px; letter-spacing:0.05em; color:#666; }
+
+.screen-body { flex:1; padding:20px 16px; display:none; flex-direction:column; }
+.screen-body.active { display:flex; }
+
+/* Welcome */
+.sw { align-items:center; justify-content:center; text-align:center; gap:10px; }
+.sw-big { font-family:'Bebas Neue',sans-serif; font-size:62px; line-height:.9; color:#111; }
+.sw-sub { font-size:9px; font-weight:600; letter-spacing:0.32em; color:#ccc; }
+.sw-hint {
+  font-size:9px; letter-spacing:0.18em; color:#ddd;
+  border-top:1px solid #f0f0f0; padding-top:12px; width:100%;
+  animation: blink 2s step-end infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* PIN */
+.sp { gap:10px; }
+.sp-lbl { font-size:10px; font-weight:700; letter-spacing:0.25em; color:#888; }
+.pin-dots { display:flex; gap:12px; margin:6px 0 8px; }
+.pin-dot { width:16px; height:16px; border:2px solid #111; background:#fff; transition:background .1s; }
+.pin-dot.filled { background:#111; }
+.pin-hint { font-size:9px; letter-spacing:0.12em; color:#ccc; }
+
+/* Menu */
+.sm { gap:6px; }
+.sm-greet { font-size:10px; font-weight:600; letter-spacing:0.15em; color:#bbb; margin-bottom:4px; }
+.sm-bal { font-family:'Bebas Neue',sans-serif; font-size:46px; color:#111; letter-spacing:0.04em; line-height:1; }
+.sm-bal-lbl { font-size:8px; font-weight:600; letter-spacing:0.28em; color:#ccc; margin-bottom:8px; }
+.sm-divider { height:1px; background:#f0f0f0; margin:4px 0 8px; }
+.sm-grid { display:grid; grid-template-columns:1fr 1fr; gap:5px; }
+.sm-btn {
+  border:2px solid #111;
+  background:#fff;
+  padding:10px 8px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9px; font-weight:700; letter-spacing:0.12em;
+  color:#111; cursor:pointer;
+  transition:all .1s; text-align:left;
+}
+.sm-btn:hover { background:#111; color:#fff; }
+.sm-btn:active { background:#000; }
+
+/* Amount */
+.sa { gap:6px; }
+.sa-lbl { font-size:10px; font-weight:700; letter-spacing:0.22em; color:#888; }
+.sa-curr { font-size:9px; font-weight:600; letter-spacing:0.25em; color:#ccc; }
+.sa-disp { font-family:'Bebas Neue',sans-serif; font-size:58px; color:#111; letter-spacing:.03em; line-height:1; }
+.sa-presets { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; margin-top:8px; }
+.sa-pre {
+  border:2px solid #111; background:#fff;
+  padding:7px 4px; text-align:center;
+  font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700;
+  cursor:pointer; transition:all .1s;
+}
+.sa-pre:hover { background:#111; color:#fff; }
+
+/* Processing */
+.spr { align-items:center; justify-content:center; gap:16px; }
+.spinner { width:28px; height:28px; border:3px solid #f0f0f0; border-top-color:#111; border-radius:50%; animation:spin .7s linear infinite; }
+@keyframes spin{to{transform:rotate(360deg)}}
+.spr-txt { font-size:12px; font-weight:700; letter-spacing:0.22em; color:#555; }
+
+/* Receipt */
+.sre { gap:5px; }
+.re-row { display:flex; justify-content:space-between; align-items:baseline; padding:6px 0; border-bottom:1px solid #f5f5f5; }
+.re-lbl { font-size:9px; font-weight:600; letter-spacing:0.16em; color:#bbb; }
+.re-val { font-size:11px; font-weight:700; letter-spacing:0.05em; color:#111; }
+.re-val.big { font-family:'Bebas Neue',sans-serif; font-size:24px; }
+.re-ok { margin-top:10px; font-size:9px; font-weight:600; letter-spacing:0.2em; color:#bbb; text-align:center; }
+
+/* Numpad */
+.numpad-zone {
+  padding:14px;
+  background:#fff;
+  border-top:2px solid #111;
+  display:flex;
+  gap:8px;
+}
+.numpad { display:grid; grid-template-columns:repeat(3,1fr); gap:5px; flex:1; }
+.nb {
+  height:48px; background:#fff; border:2px solid #111;
+  font-family:'IBM Plex Mono',monospace; font-size:20px; font-weight:700;
+  color:#111; cursor:pointer; transition:all .1s;
+  display:flex; align-items:center; justify-content:center; user-select:none;
+}
+.nb:hover { background:#f5f5f5; }
+.nb:active { background:#111; color:#fff; }
+.nb.zero { grid-column:1/3; }
+.nb.clr { background:#111; color:#fff; font-size:10px; font-weight:700; letter-spacing:.12em; }
+.nb.clr:hover { background:#333; }
+.nb.clr:active { background:#000; }
+
+.act-col { display:flex; flex-direction:column; gap:5px; width:76px; flex-shrink:0; }
+.ab {
+  height:48px; border:2px solid #111;
+  font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:700;
+  letter-spacing:.1em; cursor:pointer; transition:all .1s;
+  display:flex; align-items:center; justify-content:center; text-align:center;
+}
+.ab.confirm { background:#111; color:#fff; }
+.ab.confirm:hover { background:#333; }
+.ab.confirm:active { background:#000; }
+.ab.back { background:#fff; color:#111; font-size:20px; }
+.ab.back:hover { background:#f5f5f5; }
+.ab.back:active { background:#111; color:#fff; }
+.ab.cancel { background:#fff; color:#111; }
+.ab.cancel:hover { background:#111; color:#fff; }
+.ab.cancel:active { background:#000; color:#fff; }
+
+/* Cash zone */
+.cash-zone {
+  background:#e8e0e0; border-top:2px solid #111;
+  padding:14px 20px 18px;
+  display:flex; align-items:center; gap:14px;
+}
+.cash-slot {
+  width:116px; height:24px;
+  background:#e8e0e0; border:2px solid #2a2a2a;
+  position:relative; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden;
+}
+.cash-gap { width:84px; height:7px; background:#0a0a0a; border:1px solid #1e1e1e; }
+.cash-eject {
+  display:none; position:absolute; left:0; top:50%;
+  transform:translateY(-50%); height:20px;
+  background:#e0e0e0; border-right:1px solid #888;
+  animation:eject .5s ease-out forwards;
+}
+@keyframes eject{from{width:0}to{width:72px}}
+.cash-eject.show { display:block; }
+.cash-slot-lbl {
+  position:absolute; bottom:-15px; left:0; right:0;
+  text-align:center; font-size:7px; letter-spacing:.18em; color:#444;
+}
+.cash-info-lbl { font-size:8px; letter-spacing:.2em; color:#444; margin-bottom:3px; }
+.cash-info-val { font-size:14px; font-weight:700; letter-spacing:.08em; color:#555; }
+.cash-info-val.on { color:#fff; }
+
+/* Bottom */
+.atm-bottom {
+  background: #e8e0e0; border-top:1px solid #1e1e1e;
+  padding:10px 20px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.atm-btm-txt { font-size:7px; font-weight:600; letter-spacing:.2em; color:#444; }
+.receipt-slot { width:54px; height:9px; background:#e8e0e0; border:1px solid #222; position:relative; }
+.receipt-slot::after {
+  content:'RECEIPT'; position:absolute; bottom:-13px; left:50%; transform:translateX(-50%);
+  font-size:6px; letter-spacing:.14em; color:#444; white-space:nowrap;
+}
+
+/* ══════════════════════════════════
+   RIGHT PANEL
+══════════════════════════════════ */
+.right-panel {
+  width: 252px;
+  flex-shrink: 0;
+  border: 2px solid #111;
+  border-left: none;
+  background: #fff;
+}
+
+.metric-row {
+  padding:11px 14px;
+  border-bottom:1px solid #f0f0f0;
+  display:flex; justify-content:space-between; align-items:flex-start;
+}
+.metric-row.hi { background:#fafafa; }
+.m-lbl { font-size:9px; font-weight:600; letter-spacing:.1em; color:#999; line-height:1.5; }
+.m-unit { font-size:7px; font-weight:600; letter-spacing:.18em; color:#ccc; }
+.m-val {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:26px; color:#111; letter-spacing:.04em; line-height:1; text-align:right;
+}
+.m-val.sm { font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:700; }
+.live { animation:lpulse 4s ease-in-out infinite; }
+@keyframes lpulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* Cassettes */
+.cass {
+  padding:10px 14px;
+  border-bottom:1px solid #f0f0f0;
+  display:grid;
+  grid-template-columns:40px 1fr auto;
+  gap:8px; align-items:center;
+}
+.cass-nom {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:26px; color:#111; letter-spacing:.04em; line-height:1;
+}
+.cass-bar-bg { height:5px; background:#f0f0f0; border:1px solid #eee; overflow:hidden; }
+.cass-bar { height:100%; background:#111; transition:width .4s; }
+.cass-bar.low { background:#bbb; }
+.cass-note { font-size:8px; font-weight:600; letter-spacing:.12em; color:#ccc; margin-top:3px; }
+.cass-amt { font-size:11px; font-weight:700; letter-spacing:.04em; color:#555; text-align:right; }
+.cass-uah { font-size:7px; font-weight:600; letter-spacing:.15em; color:#ccc; text-align:right; }
+
+/* Status */
+.stat-row {
+  padding:8px 14px;
+  border-bottom:1px solid #f0f0f0;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.stat-name { font-size:9px; font-weight:600; letter-spacing:.1em; color:#999; }
+.stat-pill {
+  font-size:7px; font-weight:700; letter-spacing:.16em;
+  padding:2px 7px; border:1.5px solid;
+}
+.pill-ok { border-color:#111; color:#111; }
+.pill-low { border-color:#bbb; color:#bbb; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══ LEFT PANEL — CARDS ══ -->
+  <div class="left-panel">
+    <div class="panel-hdr">
+      <div class="panel-hdr-title">CARD LIBRARY</div>
+      <div class="panel-hdr-sub">SELECT · THEN INSERT</div>
+    </div>
+
+    <div class="section-lbl">CREDIT CARDS</div>
+
+    <div class="card-item selected" onclick="selectCard(this,'**** **** **** 4721','MYKOLA KOVALENKO','VISA','12450')">
+      <div class="ci-top">
+        <div class="ci-name">VISA PLATINUM</div>
+        <div class="ci-net">VISA<br>PLATINUM</div>
+      </div>
+      <div class="ci-num">**** **** **** 4721</div>
+      <div class="ci-holder">MYKOLA KOVALENKO</div>
+      <div class="ci-meta">EXP 09/27 · UAH</div>
+      <span class="badge badge-cr">CREDIT</span>
+    </div>
+
+    <div class="card-item" onclick="selectCard(this,'**** **** **** 8834','ANNA PETRENKO','MASTERCARD',27600)">
+      <div class="ci-top">
+        <div class="ci-name">MC WORLD</div>
+        <div class="ci-net">MASTER<br>CARD</div>
+      </div>
+      <div class="ci-num">**** **** **** 8834</div>
+      <div class="ci-holder">ANNA PETRENKO</div>
+      <div class="ci-meta">EXP 03/26 · USD</div>
+      <span class="badge badge-cr">CREDIT</span>
+    </div>
+
+    <div class="card-item" onclick="selectCard(this,'**** ****** *1109','IVAN LYSENKO','AMEX',54000)">
+      <div class="ci-top">
+        <div class="ci-name">AMEX GOLD</div>
+        <div class="ci-net">AMERICAN<br>EXPRESS</div>
+      </div>
+      <div class="ci-num">**** ****** *1109</div>
+      <div class="ci-holder">IVAN LYSENKO</div>
+      <div class="ci-meta">EXP 11/28 · USD</div>
+      <span class="badge badge-cr">CREDIT</span>
+    </div>
+
+    <div class="section-lbl">DEPOSIT CARDS</div>
+
+    <div class="card-item" onclick="selectCard(this,'**** **** **** 3302','OLENA BONDAR','VISA',8900)">
+      <div class="ci-top">
+        <div class="ci-name">VISA CLASSIC</div>
+        <div class="ci-net">VISA<br>CLASSIC</div>
+      </div>
+      <div class="ci-num">**** **** **** 3302</div>
+      <div class="ci-holder">OLENA BONDAR</div>
+      <div class="ci-meta">EXP 05/25 · UAH</div>
+      <span class="badge badge-dep">DEPOSIT</span>
+    </div>
+
+    <div class="card-item" onclick="selectCard(this,'**** **** **** 6615','SERHII MOROZ','MASTERCARD',3200)">
+      <div class="ci-top">
+        <div class="ci-name">MC STANDARD</div>
+        <div class="ci-net">MASTER<br>CARD</div>
+      </div>
+      <div class="ci-num">**** **** **** 6615</div>
+      <div class="ci-holder">SERHII MOROZ</div>
+      <div class="ci-meta">EXP 07/26 · UAH</div>
+      <span class="badge badge-dep">DEPOSIT</span>
+    </div>
+
+    <div class="section-lbl">UNIVERSAL CARDS</div>
+
+    <div class="card-item" onclick="selectCard(this,'**** ****** *9977','DARYNA KRAVETS','AMEX',142000)">
+      <div class="ci-top">
+        <div class="ci-name">AMEX PLATINUM</div>
+        <div class="ci-net">AMERICAN<br>EXPRESS</div>
+      </div>
+      <div class="ci-num">**** ****** *9977</div>
+      <div class="ci-holder">DARYNA KRAVETS</div>
+      <div class="ci-meta">EXP 01/30 · USD</div>
+      <span class="badge badge-uni">UNIVERSAL</span>
+    </div>
+
+    <div class="card-item" onclick="selectCard(this,'**** **** **** 5541','TARAS HRYTSENKO','VISA',18750)">
+      <div class="ci-top">
+        <div class="ci-name">VISA GOLD</div>
+        <div class="ci-net">VISA<br>GOLD</div>
+      </div>
+      <div class="ci-num">**** **** **** 5541</div>
+      <div class="ci-holder">TARAS HRYTSENKO</div>
+      <div class="ci-meta">EXP 08/27 · EUR</div>
+      <span class="badge badge-uni">UNIVERSAL</span>
+    </div>
+
+    <div class="card-item" onclick="selectCard(this,'**** **** **** 2280','YULIYA SYDORENKO','MASTERCARD',33400)">
+      <div class="ci-top">
+        <div class="ci-name">MC WORLD ELITE</div>
+        <div class="ci-net">MASTER<br>CARD</div>
+      </div>
+      <div class="ci-num">**** **** **** 2280</div>
+      <div class="ci-holder">YULIYA SYDORENKO</div>
+      <div class="ci-meta">EXP 12/29 · EUR</div>
+      <span class="badge badge-uni">UNIVERSAL</span>
+    </div>
+
+  </div>
+
+  <!-- ══ CENTER — ATM ══ -->
+  <div class="atm">
+
+    <div class="atm-top">
+      <div class="atm-brand">ATM SIMULATOR</div>
+      <div class="atm-top-right">
+        <div class="atm-online"><div class="led"></div>ONLINE</div>
+        <div class="atm-id">TERMINAL #0042 · ODESA</div>
+      </div>
+    </div>
+
+    <div class="card-zone">
+      <div class="card-slot" id="card-slot-el" onclick="insertCard()" title="↑ Click to insert selected card">
+        <div class="slot-gap"></div>
+        <div class="card-in-slot" id="card-in-slot"></div>
+        <div class="slot-lbl">SLOT ↑ CLICK TO INSERT</div>
+      </div>
+      <div>
+        <div class="cri-label">CARD READER</div>
+        <div class="cri-status" id="cri-status">INSERT CARD</div>
+        <div class="cri-num" id="cri-num">&nbsp;</div>
+      </div>
+    </div>
+
+    <div class="screen-row">
+
+      <!-- LEFT 4 side buttons -->
+      <div class="side-btns L">
+        <div class="sb-wrap">
+          <button class="sb" onclick="sideBtn('L1')" title="CASH OUT"></button>
+          <div class="sb-lbl">CASH</div>
+        </div>
+        <div class="sb-wrap">
+          <button class="sb" onclick="sideBtn('L2')" title="BALANCE"></button>
+          <div class="sb-lbl">BAL</div>
+        </div>
+        <div class="sb-wrap">
+          <button class="sb" onclick="sideBtn('L3')" title="TRANSFER"></button>
+          <div class="sb-lbl">XFER</div>
+        </div>
+        <div class="sb-wrap">
+          <button class="sb" onclick="sideBtn('L4')" title="EJECT"></button>
+          <div class="sb-lbl">EJECT</div>
+        </div>
+      </div>
+
+      <div class="screen-frame">
+        <div class="screen">
+          <div class="screen-hdr">
+            <div class="screen-title" id="screen-title">WELCOME</div>
+            <div class="screen-time" id="screen-time">00:00</div>
+          </div>
+
+          <!-- WELCOME -->
+          <div class="screen-body active sw" id="s-welcome">
+            <div class="sw-big">GOOD<br>DAY</div>
+            <div class="sw-sub">AUTOMATED TELLER MACHINE</div>
+            <div class="sw-hint">← SELECT CARD · THEN INSERT ↑</div>
+          </div>
+
+          <!-- PIN -->
+          <div class="screen-body sp" id="s-pin">
+            <div class="sp-lbl">ENTER PIN CODE</div>
+            <div class="pin-dots">
+              <div class="pin-dot" id="p0"></div>
+              <div class="pin-dot" id="p1"></div>
+              <div class="pin-dot" id="p2"></div>
+              <div class="pin-dot" id="p3"></div>
+            </div>
+            <div class="pin-hint" id="pin-hint">NUMPAD · HINT: 1234</div>
+          </div>
+
+          <!-- MENU -->
+          <div class="screen-body sm" id="s-menu">
+            <div class="sm-greet" id="sm-greet">WELCOME, CARDHOLDER</div>
+            <div class="sm-bal" id="bal-disp">0.00</div>
+            <div class="sm-bal-lbl">AVAILABLE BALANCE · UAH</div>
+            <div class="sm-divider"></div>
+            <div class="sm-grid">
+              <button class="sm-btn" onclick="goWithdraw()">↓ WITHDRAW</button>
+              <button class="sm-btn" onclick="goMenu()">≡ BALANCE</button>
+              <button class="sm-btn" onclick="goMenu()">⇄ TRANSFER</button>
+              <button class="sm-btn" onclick="ejectCard()">← EJECT CARD</button>
+            </div>
+          </div>
+
+          <!-- AMOUNT -->
+          <div class="screen-body sa" id="s-amount">
+            <div class="sa-lbl">WITHDRAW AMOUNT</div>
+            <div class="sa-curr">UAH</div>
+            <div class="sa-disp" id="amt-disp">0</div>
+            <div class="sa-presets">
+              <div class="sa-pre" onclick="setAmt(200)">200</div>
+              <div class="sa-pre" onclick="setAmt(500)">500</div>
+              <div class="sa-pre" onclick="setAmt(1000)">1000</div>
+              <div class="sa-pre" onclick="setAmt(2000)">2000</div>
+            </div>
+          </div>
+
+          <!-- PROCESSING -->
+          <div class="screen-body spr" id="s-processing">
+            <div class="spinner"></div>
+            <div class="spr-txt" id="proc-txt">PROCESSING...</div>
+          </div>
+
+          <!-- RECEIPT -->
+          <div class="screen-body sre" id="s-receipt">
+            <div class="re-row"><span class="re-lbl">DATE</span><span class="re-val" id="r-date">—</span></div>
+            <div class="re-row"><span class="re-lbl">CARD</span><span class="re-val" id="r-card">—</span></div>
+            <div class="re-row"><span class="re-lbl">OPERATION</span><span class="re-val">WITHDRAWAL</span></div>
+            <div class="re-row"><span class="re-lbl">AMOUNT</span><span class="re-val big" id="r-amt">—</span></div>
+            <div class="re-row"><span class="re-lbl">NEW BALANCE</span><span class="re-val" id="r-bal">—</span></div>
+            <div class="re-ok">COLLECT CASH ↓ · PRESS CONFIRM</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT 4 side buttons -->
+      <div class="side-btns R">
+        <div class="sb-wrap">
+          <button class="sb" onclick="sideBtn('R1')" title="CASH OUT"></button>
+          <div class="sb-lbl">CASH</div>
+        </div>
+        <div class="sb-wrap">
+          <button class="sb" onclick="sideBtn('R2')" title="STATEMENT"></button>
+          <div class="sb-lbl">STMT</div>
+        </div>
+        <div class="sb-wrap">
+          <button class="sb" onclick="sideBtn('R3')" title="SETTINGS"></button>
+          <div class="sb-lbl">SET</div>
+        </div>
+        <div class="sb-wrap">
+          <button class="sb" onclick="sideBtn('R4')" title="HELP"></button>
+          <div class="sb-lbl">HELP</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- NUMPAD -->
+    <div class="numpad-zone">
+      <div class="numpad">
+        <button class="nb" onclick="numPress('1')">1</button>
+        <button class="nb" onclick="numPress('2')">2</button>
+        <button class="nb" onclick="numPress('3')">3</button>
+        <button class="nb" onclick="numPress('4')">4</button>
+        <button class="nb" onclick="numPress('5')">5</button>
+        <button class="nb" onclick="numPress('6')">6</button>
+        <button class="nb" onclick="numPress('7')">7</button>
+        <button class="nb" onclick="numPress('8')">8</button>
+        <button class="nb" onclick="numPress('9')">9</button>
+        <button class="nb zero" onclick="numPress('0')">0</button>
+        <button class="nb clr" onclick="numClear()">CLR</button>
+      </div>
+      <div class="act-col">
+        <button class="ab confirm" onclick="doConfirm()">CONFIRM</button>
+        <button class="ab back" onclick="doBack()">⌫</button>
+        <button class="ab cancel" onclick="doCancel()">CANCEL</button>
+      </div>
+    </div>
+
+    <!-- CASH ZONE -->
+    <div class="cash-zone">
+      <div class="cash-slot" style="position:relative;">
+        <div class="cash-gap"></div>
+        <div class="cash-eject" id="cash-eject"></div>
+        <div class="cash-slot-lbl">CASH DISPENSER</div>
+      </div>
+      <div>
+        <div class="cash-info-lbl">CASH OUTPUT</div>
+        <div class="cash-info-val" id="cash-val">STANDBY</div>
+      </div>
+    </div>
+
+    <div class="atm-bottom">
+      <div class="atm-btm-txt">24H SERVICE</div>
+      <div class="receipt-slot"></div>
+      <div class="atm-btm-txt">PCI DSS · SSL</div>
+    </div>
+
+  </div>
+
+  <!-- ══ RIGHT PANEL — METRICS ══ -->
+  <div class="right-panel">
+    <div class="panel-hdr">
+      <div class="panel-hdr-title">ATM METRICS</div>
+      <div class="panel-hdr-sub">TERMINAL #0042 · LIVE</div>
+    </div>
+
+    <div class="section-lbl">TRANSACTIONS</div>
+
+    <div class="metric-row hi">
+      <div><div class="m-lbl">TODAY'S COUNT</div><div class="m-unit">TXN</div></div>
+      <div><div class="m-val live" id="txn-today">247</div></div>
+    </div>
+    <div class="metric-row">
+      <div><div class="m-lbl">THIS SESSION</div><div class="m-unit">TXN</div></div>
+      <div><div class="m-val" id="txn-sess">0</div></div>
+    </div>
+    <div class="metric-row hi">
+      <div><div class="m-lbl">TOTAL DISPENSED</div><div class="m-unit">UAH TODAY</div></div>
+      <div><div class="m-val sm" id="tot-disp">184,500</div></div>
+    </div>
+    <div class="metric-row">
+      <div><div class="m-lbl">AVG TRANSACTION</div><div class="m-unit">UAH</div></div>
+      <div><div class="m-val sm">747</div></div>
+    </div>
+    <div class="metric-row">
+      <div><div class="m-lbl">DECLINED TXN</div><div class="m-unit">TODAY</div></div>
+      <div><div class="m-val">12</div></div>
+    </div>
+    <div class="metric-row">
+      <div><div class="m-lbl">UPTIME TODAY</div><div class="m-unit">HH:MM</div></div>
+      <div><div class="m-val sm" id="uptime">00:00</div></div>
+    </div>
+
+    <div class="section-lbl">CASH CASSETTES</div>
+
+    <div class="cass">
+      <div class="cass-nom">500</div>
+      <div>
+        <div class="cass-bar-bg"><div class="cass-bar" style="width:82%"></div></div>
+        <div class="cass-note">41 NOTES · 82%</div>
+      </div>
+      <div>
+        <div class="cass-amt" id="c500">20,500</div>
+        <div class="cass-uah">UAH</div>
+      </div>
+    </div>
+    <div class="cass">
+      <div class="cass-nom">200</div>
+      <div>
+        <div class="cass-bar-bg"><div class="cass-bar" style="width:60%"></div></div>
+        <div class="cass-note">75 NOTES · 60%</div>
+      </div>
+      <div>
+        <div class="cass-amt" id="c200">15,000</div>
+        <div class="cass-uah">UAH</div>
+      </div>
+    </div>
+    <div class="cass">
+      <div class="cass-nom">100</div>
+      <div>
+        <div class="cass-bar-bg"><div class="cass-bar low" style="width:22%"></div></div>
+        <div class="cass-note">28 NOTES · LOW ⚠</div>
+      </div>
+      <div>
+        <div class="cass-amt" id="c100">2,800</div>
+        <div class="cass-uah">UAH</div>
+      </div>
+    </div>
+    <div class="cass">
+      <div class="cass-nom">50</div>
+      <div>
+        <div class="cass-bar-bg"><div class="cass-bar" style="width:70%"></div></div>
+        <div class="cass-note">140 NOTES · 70%</div>
+      </div>
+      <div>
+        <div class="cass-amt" id="c50">7,000</div>
+        <div class="cass-uah">UAH</div>
+      </div>
+    </div>
+
+    <div class="section-lbl">CASH TOTALS</div>
+
+    <div class="metric-row hi">
+      <div><div class="m-lbl">TOTAL IN MACHINE</div><div class="m-unit">UAH</div></div>
+      <div><div class="m-val sm" id="total-cash">45,300</div></div>
+    </div>
+    <div class="metric-row">
+      <div><div class="m-lbl">CAPACITY USED</div><div class="m-unit">%</div></div>
+      <div><div class="m-val">58%</div></div>
+    </div>
+
+    <div class="section-lbl">SYSTEM STATUS</div>
+
+    <div class="stat-row"><div class="stat-name">CARD READER</div><div class="stat-pill pill-ok">OK</div></div>
+    <div class="stat-row"><div class="stat-name">CASH DISPENSER</div><div class="stat-pill pill-ok">OK</div></div>
+    <div class="stat-row"><div class="stat-name">RECEIPT PRINTER</div><div class="stat-pill pill-ok">OK</div></div>
+    <div class="stat-row"><div class="stat-name">NETWORK LINK</div><div class="stat-pill pill-ok">ONLINE</div></div>
+    <div class="stat-row"><div class="stat-name">100 UAH CASSETTE</div><div class="stat-pill pill-low">LOW</div></div>
+    <div class="stat-row" style="border-bottom:none;"><div class="stat-name">ENCRYPTION HSM</div><div class="stat-pill pill-ok">ACTIVE</div></div>
+
+  </div>
+
+</div>
+
+<script>
+const S = {
+  screen:'welcome', cardInserted:false,
+  pin:'', correctPin:'1234', pinAttempts:0,
+  amount:0, balance:12450, customAmt:'',
+  cardNumber:'**** **** **** 4721', holderName:'MYKOLA KOVALENKO',
+  sessCount:0, totalDisp:184500,
+};
+
+// Clock
+const t0 = Date.now();
+function tick(){
+  const n=new Date();
+  document.getElementById('screen-time').textContent=
+    `${pad(n.getHours())}:${pad(n.getMinutes())}`;
+  const s=Math.floor((Date.now()-t0)/1000);
+  document.getElementById('uptime').textContent=
+    `${pad(Math.floor(s/3600))}:${pad(Math.floor((s%3600)/60))}`;
+}
+function pad(x){return String(x).padStart(2,'0');}
+tick(); setInterval(tick,1000);
+
+// Drift txn count
+setInterval(()=>{
+  const el=document.getElementById('txn-today');
+  el.textContent=parseInt(el.textContent)+1;
+},9000);
+
+// Screen
+function show(id,title){
+  document.querySelectorAll('.screen-body').forEach(e=>e.classList.remove('active'));
+  document.getElementById('s-'+id).classList.add('active');
+  document.getElementById('screen-title').textContent=title;
+  S.screen=id;
+}
+
+// Card select
+function selectCard(el,num,holder,net,bal){
+  document.querySelectorAll('.card-item').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  S.balance=parseInt(bal); S.cardNumber=num; S.holderName=holder;
+  if(!S.cardInserted) document.getElementById('cri-status').textContent='CARD READY — INSERT ↑';
+}
+
+// Insert
+function insertCard(){
+  if(S.cardInserted) return;
+  S.cardInserted=true;
+  document.getElementById('card-in-slot').classList.add('show');
+  document.getElementById('cri-status').textContent='CARD ACCEPTED';
+  document.getElementById('cri-num').textContent=S.cardNumber;
+  S.pin=''; updateDots();
+  document.getElementById('pin-hint').textContent='NUMPAD BELOW · HINT: 1234';
+  show('pin','PIN ENTRY');
+}
+
+function ejectCard(){
+  S.cardInserted=false;
+  document.getElementById('card-in-slot').classList.remove('show');
+  document.getElementById('cri-status').textContent='INSERT CARD';
+  document.getElementById('cri-num').textContent='\u00a0';
+  show('welcome','WELCOME');
+}
+
+function updateDots(){
+  for(let i=0;i<4;i++)
+    document.getElementById('p'+i).classList.toggle('filled',i<S.pin.length);
+}
+
+// Numpad
+function numPress(d){
+  if(S.screen==='pin'&&S.pin.length<4){S.pin+=d;updateDots();}
+  else if(S.screen==='amount'&&S.customAmt.length<6){
+    S.customAmt+=d; S.amount=parseInt(S.customAmt)||0;
+    document.getElementById('amt-disp').textContent=S.amount.toLocaleString();
+  }
+}
+function doBack(){
+  if(S.screen==='pin'){S.pin=S.pin.slice(0,-1);updateDots();}
+  else if(S.screen==='amount'){
+    S.customAmt=S.customAmt.slice(0,-1);
+    S.amount=parseInt(S.customAmt)||0;
+    document.getElementById('amt-disp').textContent=S.amount.toLocaleString()||'0';
+  }
+}
+function numClear(){
+  if(S.screen==='pin'){S.pin='';updateDots();}
+  else if(S.screen==='amount'){S.customAmt='';S.amount=0;document.getElementById('amt-disp').textContent='0';}
+}
+
+// Confirm
+function doConfirm(){
+  if(S.screen==='pin') confirmPin();
+  else if(S.screen==='amount') confirmAmount();
+  else if(S.screen==='receipt') finishTxn();
+}
+
+function confirmPin(){
+  if(S.pin.length<4) return;
+  if(S.pin===S.correctPin){
+    S.pinAttempts=0;
+    document.getElementById('proc-txt').textContent='VERIFYING PIN...';
+    show('processing','VERIFYING');
+    setTimeout(()=>{
+      document.getElementById('bal-disp').textContent=
+        S.balance.toLocaleString('uk-UA',{minimumFractionDigits:2});
+      document.getElementById('sm-greet').textContent=
+        'WELCOME, '+S.holderName.split(' ')[0];
+      show('menu','MAIN MENU');
+    },1300);
+  } else {
+    S.pinAttempts++;
+    S.pin=''; updateDots();
+    if(S.pinAttempts>=3){
+      document.getElementById('proc-txt').textContent='CARD BLOCKED';
+      show('processing','ERROR');
+      setTimeout(()=>ejectCard(),2500);
+    } else {
+      document.getElementById('pin-hint').textContent=
+        `WRONG PIN — ${3-S.pinAttempts} ATTEMPT(S) LEFT`;
+    }
+  }
+}
+
+function goWithdraw(){
+  S.amount=0; S.customAmt='';
+  document.getElementById('amt-disp').textContent='0';
+  show('amount','WITHDRAW');
+}
+function goMenu(){ show('menu','MAIN MENU'); }
+function setAmt(v){
+  S.amount=v; S.customAmt=String(v);
+  document.getElementById('amt-disp').textContent=v.toLocaleString();
+}
+
+function confirmAmount(){
+  const lbl=document.querySelector('#s-amount .sa-lbl');
+  if(S.amount<=0){lbl.textContent='ENTER AMOUNT FIRST';setTimeout(()=>lbl.textContent='WITHDRAW AMOUNT',1500);return;}
+  if(S.amount>S.balance){lbl.textContent='INSUFFICIENT FUNDS';setTimeout(()=>lbl.textContent='WITHDRAW AMOUNT',1500);return;}
+  if(S.amount%50!==0){lbl.textContent='MULTIPLES OF 50 ONLY';setTimeout(()=>lbl.textContent='WITHDRAW AMOUNT',1500);return;}
+  document.getElementById('proc-txt').textContent='DISPENSING CASH...';
+  show('processing','DISPENSING');
+  setTimeout(()=>{S.balance-=S.amount;dispense();},1800);
+}
+
+function dispense(){
+  S.sessCount++;S.totalDisp+=S.amount;
+  document.getElementById('txn-sess').textContent=S.sessCount;
+  document.getElementById('tot-disp').textContent=S.totalDisp.toLocaleString();
+
+  const ce=document.getElementById('cash-eject');
+  ce.classList.remove('show'); void ce.offsetWidth; ce.classList.add('show');
+  const cv=document.getElementById('cash-val');
+  cv.textContent='TAKE YOUR CASH'; cv.classList.add('on');
+
+  const n=new Date();
+  document.getElementById('r-date').textContent=
+    `${pad(n.getDate())}.${pad(n.getMonth()+1)}.${n.getFullYear()}`;
+  document.getElementById('r-card').textContent=S.cardNumber;
+  document.getElementById('r-amt').textContent=S.amount.toLocaleString()+' UAH';
+  document.getElementById('r-bal').textContent=
+    S.balance.toLocaleString('uk-UA',{minimumFractionDigits:2})+' UAH';
+  show('receipt','TRANSACTION OK');
+}
+
+function finishTxn(){
+  document.getElementById('cash-eject').classList.remove('show');
+  const cv=document.getElementById('cash-val');
+  cv.textContent='STANDBY'; cv.classList.remove('on');
+  document.getElementById('bal-disp').textContent=
+    S.balance.toLocaleString('uk-UA',{minimumFractionDigits:2});
+  show('menu','MAIN MENU');
+}
+
+function doCancel(){
+  if(S.screen==='welcome') return;
+  if(S.screen==='receipt'){finishTxn();return;}
+  if(S.screen==='pin'||S.screen==='processing'){ejectCard();return;}
+  if(S.screen==='amount'){show('menu','MAIN MENU');return;}
+  ejectCard();
+}
+
+function sideBtn(id){
+  if(!S.cardInserted) return;
+  const map={L1:goWithdraw,L2:goMenu,L3:goMenu,L4:ejectCard,
+             R1:goWithdraw,R2:goMenu,R3:goMenu,R4:goMenu};
+  if(map[id]) map[id]();
+}
+</script>
+</body>
+</html>
